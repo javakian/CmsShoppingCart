@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CmsShoppingCart.Models.Data;
+using CmsShoppingCart.Models.ViewModels.Shop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,10 +10,24 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
 {
     public class ShopController : Controller
     {
-        // GET: Admin/Shop
-        public ActionResult Index()
+        // GET: Admin/Shop/Categories
+        public ActionResult Categories()
         {
-            return View();
+            // Declare a list of models
+            List<CategoryVM> categoryVMList;
+
+            using (Db db = new Db())
+            {
+                // Init the list
+                categoryVMList = db.Categories
+                                .ToArray()
+                                .OrderBy(x => x.Sorting)
+                                .Select(x => new CategoryVM(x))
+                                .ToList();
+            }
+
+            // Return view with list
+            return View(categoryVMList);
         }
     }
 }
