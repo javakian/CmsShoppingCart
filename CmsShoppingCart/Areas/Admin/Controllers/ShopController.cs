@@ -134,6 +134,7 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
         }
 
         // GET: Admin/Shop/AddProduct
+        [HttpGet]
         public ActionResult AddProduct()
         {
             // Init model
@@ -147,6 +148,68 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
 
             // Return view with model
             return View(model);
+        }
+
+        // POST: Admin/Shop/AddProduct
+        [HttpPost]
+        public ActionResult AddProduct(ProductVM model, HttpPostedFileBase file)
+        {
+            // Check model state
+            if (! ModelState.IsValid)
+            {
+                using (Db db = new Db())
+                {
+                    model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+                    return View(model);
+                }
+            }
+
+            // Make sure product name is unique
+            using (Db db = new Db())
+            {
+                if (db.Products.Any(x => x.Name == model.Name))
+                {
+                    model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+                    ModelState.AddModelError("", "That product name is taken!");
+                    return View(model);
+                }
+            }
+
+            // Declare product id
+            int id;
+
+            // Init and save productDTO
+            using (Db db = new Db())
+            {
+                ProductDTO product = new ProductDTO();
+
+                product.Name = model.Name;
+                product.Slug = model.Name.Replace(" ", "-").ToLower();
+                product.Description = model.Description;
+                product.Price = model.Price;
+                product.CategoryId = model.CategoryId;
+
+                CategoryDTO catDTO = db.Categories.FirstOrDefault(x => x.Id == model.CategoryId);
+                model.CategoryName = catDTO.Name;
+
+                db.Products.Add(product);
+                db.SaveChanges();
+
+                // Get the id
+                id = product.Id;
+            }
+
+            // Set TempData message
+            TempData["SM"] = "You have added a product!";
+
+            #region Upload Image
+
+
+
+            #endregion
+
+            // Redirect
+            return View();
         }
     }
 }
