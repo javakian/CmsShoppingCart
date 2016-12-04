@@ -6,6 +6,14 @@
 
 <h2>Add Product</h2>
 
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+
 @using (Html.BeginForm("AddPRoduct", "Shop", FormMethod.Post, new { enctype = "multipart/form-data" } ))
 {
     @Html.AntiForgeryToken()
