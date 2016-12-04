@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using PagedList;
 
 namespace CmsShoppingCart.Areas.Admin.Controllers
 {
@@ -281,6 +282,38 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
 
             // Redirect
             return RedirectToAction("AddProduct");
+        }
+
+        // GET: Admin/Shop/Products
+        public ActionResult Products(int? page, int? catId)
+        {
+            // Declare a list of ProductVM
+            List<ProductVM> listOfProductVM;
+
+            // Set page number
+            var pageNumber = page ?? 1;
+
+            using (Db db = new Db())
+            {
+                // Init the list
+                listOfProductVM = db.Products.ToArray()
+                                  .Where(x => catId == null || catId == 0 || x.CategoryId == catId)
+                                  .Select(x => new ProductVM(x))
+                                  .ToList();
+
+                // Populate categories select list
+                ViewBag.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+
+                // Set selected category
+                ViewBag.SelectedCat = catId.ToString();
+            }
+
+            // Set pagination
+            var onePageOfProducts = listOfProductVM.ToPagedList(pageNumber, 3);
+            ViewBag.OnePageOfProducts = onePageOfProducts;
+
+            // Return view with list
+            return View(listOfProductVM);
         }
     }
 }
