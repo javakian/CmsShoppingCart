@@ -315,5 +315,37 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
             // Return view with list
             return View(listOfProductVM);
         }
+
+        // GET: Admin/Shop/EditProduct/id
+        public ActionResult EditProduct(int id)
+        {
+            // Declare productVM
+            ProductVM model;
+
+            using (Db db = new Db())
+            {
+                // Get the product
+                ProductDTO dto = db.Products.Find(id);
+
+                // Make sure product exists
+                if (dto == null)
+                {
+                    return Content("That product does not exist.");
+                }
+
+                // init model
+                model = new ProductVM(dto);
+
+                // Make a select list
+                model.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+
+                // Get all gallery images
+                model.GalleryImages = Directory.EnumerateFiles(Server.MapPath("~/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
+                                                .Select(fn => Path.GetFileName(fn));
+            }
+
+            // Return view with model
+            return View(model);
+        }
     }
 }
