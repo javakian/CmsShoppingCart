@@ -12,7 +12,29 @@ namespace CmsShoppingCart.Controllers
         // GET: Cart
         public ActionResult Index()
         {
-            return View();
+            // Init the cart list
+            var cart = Session["cart"] as List<CartVM> ?? new List<CartVM>();
+
+            // Check if cart is empty
+            if (cart.Count == 0 || Session["cart"] == null)
+            {
+                ViewBag.Message = "Your cart is empty.";
+                return View();
+            }
+
+            // Calculate total and save to ViewBag
+
+            decimal total = 0m;
+
+            foreach (var item in cart)
+            {
+                total += item.Total;
+            }
+
+            ViewBag.GrandTotal = total;
+
+            // Return view with list
+            return View(cart);
         }
 
         public ActionResult CartPartial()
