@@ -29,3 +29,44 @@
     </div>
 
 </div>
+
+<hr />
+
+<div class="row">
+
+    <h3>Product Gallery</h3>
+
+    <div class="col-xs-12 fancyboxdiv">
+        <br /><br />
+        @foreach(var image in Model.GalleryImages)
+        {
+            <div style="display: inline-block">
+                <a class="fancybox" rel="gallery1" href="/Images/Uploads/Products/@Model.Id/Gallery/@image">
+                    <img src="/Images/Uploads/Products/@Model.Id/Gallery/Thumbs/@image" />
+                </a>
+            </div>
+        }
+    </div>
+
+</div>
+
+<link href="~/Content/jquery.fancybox.css" rel="stylesheet" />
+
+@section Scripts {
+    
+<script src="~/Scripts/jquery.fancybox.js"></script>
+<script>
+$(function () {
+
+    /*
+    * Fancybox
+    */
+
+    $(".fancybox").fancybox();
+
+    ////////////////////////////////////////////////////////
+
+});
+</script>
+    
+}
