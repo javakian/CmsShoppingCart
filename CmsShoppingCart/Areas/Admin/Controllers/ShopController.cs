@@ -528,5 +528,19 @@ namespace CmsShoppingCart.Areas.Admin.Controllers
             }
 
         }
+
+        // POST: Admin/Shop/DeleteImage
+        [HttpPost]
+        public void DeleteImage(int id, string imageName)
+        {
+            string fullPath1 = Request.MapPath("~/Images/Uploads/Products/" + id.ToString() + "/Gallery/" + imageName);
+            string fullPath2 = Request.MapPath("~/Images/Uploads/Products/" + id.ToString() + "/Gallery/Thumbs/" + imageName);
+
+            if (System.IO.File.Exists(fullPath1))
+                System.IO.File.Delete(fullPath1);
+
+            if (System.IO.File.Exists(fullPath2))
+                System.IO.File.Delete(fullPath2);
+        }
     }
 }
