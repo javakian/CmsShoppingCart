@@ -22,3 +22,16 @@ table.sorting.categories td {
 .ajaxdivtd {
     position: absolute;
 }
+
+span.loader {
+    display: none;
+}
+
+span.ajaxmsg {
+    background: green;
+    color: white;
+    padding: 10px;
+    display: none;
+    position: absolute;
+    bottom: 0;
+}
