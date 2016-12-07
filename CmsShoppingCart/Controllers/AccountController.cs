@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace CmsShoppingCart.Controllers
 {
@@ -17,6 +18,7 @@ namespace CmsShoppingCart.Controllers
         }
 
         // GET: /account/login
+        [HttpGet]
         public ActionResult Login()
         {
             // Confirm user is not logged in
@@ -28,6 +30,40 @@ namespace CmsShoppingCart.Controllers
 
             // Return view
             return View();
+        }
+
+        // POST: /account/login
+        [HttpPost]
+        public ActionResult Login(LoginUserVM model)
+        {
+            // Check model state
+            if (! ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Check if the user is valid
+
+            bool isValid = false;
+
+            using (Db db = new Db())
+            {
+                if (db.Users.Any(x => x.Username.Equals(model.Username) && x.Password.Equals(model.Password)))
+                {
+                    isValid = true;
+                }
+            }
+
+            if (! isValid)
+            {
+                ModelState.AddModelError("", "Invalid username or password.");
+                return View(model);
+            }
+            else
+            {
+                FormsAuthentication.SetAuthCookie(model.Username, model.RememberMe);
+                return Redirect(FormsAuthentication.GetRedirectUrl(model.Username, model.RememberMe));
+            }
         }
 
         // GET: /account/create-account
@@ -99,6 +135,13 @@ namespace CmsShoppingCart.Controllers
             TempData["SM"] = "You are now registered and can login.";
 
             // Redirect
+            return Redirect("~/account/login");
+        }
+
+        // GET: /account/Logout
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
             return Redirect("~/account/login");
         }
     }
