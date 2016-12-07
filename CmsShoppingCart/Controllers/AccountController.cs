@@ -193,5 +193,63 @@ namespace CmsShoppingCart.Controllers
             // Return view with model
             return View("UserProfile", model);
         }
+
+        // POST: /account/user-profile
+        [HttpPost]
+        [ActionName("user-profile")]
+        public ActionResult UserProfile(UserProfileVM model)
+        {
+            // Check model state
+            if (!ModelState.IsValid)
+            {
+                return View("UserProfile", model);
+            }
+
+            // Check if passwords match if need be
+            if (!string.IsNullOrWhiteSpace(model.Password))
+            {
+                if (!model.Password.Equals(model.ConfirmPassword))
+                {
+                    ModelState.AddModelError("", "Passwords do not match.");
+                    return View("UserProfile", model);
+                }
+            }
+
+            using (Db db = new Db())
+            {
+                // Get username
+                string username = User.Identity.Name;
+
+                // Make sure username is unique
+                if (db.Users.Where(x => x.Id != model.Id).Any(x => x.Username == username))
+                {
+                    ModelState.AddModelError("", "Username " + model.Username + " already exists.");
+                    model.Username = "";
+                    return View("UserProfile", model);
+                }
+
+                // Edit DTO
+                UserDTO dto = db.Users.Find(model.Id);
+
+                dto.FirstName = model.FirstName;
+                dto.LastName = model.LastName;
+                dto.EmailAddress = model.EmailAddress;
+                dto.Username = model.Username;
+
+                if (!string.IsNullOrWhiteSpace(model.Password))
+                {
+                    dto.Password = model.Password;
+                }
+
+                // Save
+                db.SaveChanges();
+            }
+
+            // Set TempData message
+            TempData["SM"] = "You have edited your profile!";
+
+            // Redirect
+            return Redirect("~/account/user-profile");
+        }
     }
 }
