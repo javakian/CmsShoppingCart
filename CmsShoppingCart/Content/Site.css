@@ -56,13 +56,13 @@ ul.adminarea {
     height: 100%;
     background: white;
     display: none;
+    z-index: 1;
 }
 
 .ajaxbg span {
     position: absolute;
-    top: 50%;
+    top: 30%;
     left: 50%;
-    transform: translate3d(-50% -50%, 0);
 }
 
 form.paypalform {
