@@ -140,12 +140,14 @@ namespace CmsShoppingCart.Controllers
         }
 
         // GET: /account/Logout
+        [Authorize]
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
             return Redirect("~/account/login");
         }
 
+        [Authorize]
         public ActionResult UserNavPartial()
         {
             // Get username
@@ -174,6 +176,7 @@ namespace CmsShoppingCart.Controllers
         // GET: /account/user-profile
         [HttpGet]
         [ActionName("user-profile")]
+        [Authorize]
         public ActionResult UserProfile()
         {
             // Get username
@@ -198,6 +201,7 @@ namespace CmsShoppingCart.Controllers
         // POST: /account/user-profile
         [HttpPost]
         [ActionName("user-profile")]
+        [Authorize]
         public ActionResult UserProfile(UserProfileVM model)
         {
             // Check model state
@@ -254,6 +258,7 @@ namespace CmsShoppingCart.Controllers
         }
 
         // GET: /account/Orders
+        [Authorize(Roles="User")]
         public ActionResult Orders()
         {
             // Init list of OrdersForUserVM

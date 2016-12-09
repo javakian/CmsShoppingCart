@@ -12,6 +12,7 @@ using CmsShoppingCart.Areas.Admin.Models.ViewModels.Shop;
 
 namespace CmsShoppingCart.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
         // GET: Admin/Shop/Categories
